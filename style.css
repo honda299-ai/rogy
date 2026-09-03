@@ -1,342 +1,325 @@
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Baloo+Bhaijaan+2:wght@700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Baloo+Bhaijaan+2:wght@700;800&display=swap');
 
-/* ===== المتغيرات ===== */
 :root {
   --bg-gradient: linear-gradient(135deg, #ffe4ec 0%, #fff5f7 50%, #fce4ec 100%);
-  --container-bg: rgba(255, 255, 255, 0.96);
+  --container-bg: rgba(255, 255, 255, 0.98);
   --container-border: #ffb6c1;
   --inner-bg: #fff0f5;
   --inner-border: #ff80ab;
   --text-main: #880e4f;
   --title-color: #d63384;
   --table-bg: #ffffff;
-  --th-gradient: linear-gradient(45deg, #ff80ab, #f48fb1);
-  --day-bg: #f8bbd0;
+  --day-bg: #ff80ab;
   --day-text: #ffffff;
   --footer-bg: #ffe4ec;
   --footer-text: #ad1457;
   --note-bg: #fff9c4;
   --note-border: #fbc02d;
   --hero-bg: linear-gradient(135deg, #ff66a3, #ff1493);
-  --shadow-color: rgba(255, 105, 180, 0.25);
+  --shadow-color: rgba(255, 105, 180, 0.2);
   --edit-btn-bg: #4a6fa5;
   --theme-btn-bg: #f9a825;
   
-  --bio-bg: #e8f5e9; --bio-text: #2e7d32;
-  --eng-bg: #e3f2fd; --eng-text: #1565c0;
-  --chem-bg: #f3e5f5; --chem-text: #6a1b9a;
-  --arabic-bg: #fffde7; --arabic-text: #f57f17;
-  --off-bg: #eceff1; --off-text: #546e7a;
+  --bio-color: #2e7d32;
+  --eng-color: #1565c0;
+  --chem-color: #6a1b9a;
+  --arabic-color: #d84315;
+  --off-color: #546e7a;
 }
 
 [data-theme="dark"] {
-  --bg-gradient: linear-gradient(135deg, #121212, #1e1e2f, #2a1a2e);
-  --container-bg: rgba(25, 25, 35, 0.96);
-  --container-border: #7a4a7a;
-  --inner-bg: #2a1f2e;
-  --inner-border: #a060a0;
+  --bg-gradient: linear-gradient(135deg, #0f0c1b, #1a102f, #24142c);
+  --container-bg: rgba(26, 20, 35, 0.98);
+  --container-border: #5a305a;
+  --inner-bg: #1e1525;
+  --inner-border: #804080;
   --text-main: #e0c0d0;
-  --title-color: #e080b0;
-  --table-bg: #2f2533;
-  --th-gradient: linear-gradient(45deg, #7a3a7a, #aa55aa);
-  --day-bg: #4a2a4a;
-  --day-text: #f0d0e0;
-  --footer-bg: #2a1a2a;
+  --title-color: #f080b0;
+  --table-bg: #271c2d;
+  --day-bg: #804080;
+  --day-text: #ffffff;
+  --footer-bg: #201424;
   --footer-text: #d0a0b0;
-  --note-bg: #3a2a1a;
+  --note-bg: #2d2415;
   --note-border: #c09040;
-  --note-title: #f0c060;
-  --note-text: #d0c0b0;
-  --hero-bg: linear-gradient(135deg, #6a2a6a, #4a1a4a);
-  --shadow-color: rgba(120, 40, 120, 0.5);
-  --edit-btn-bg: #6a4a8a;
-  --theme-btn-bg: #f0c040;
-  --bio-bg: #1a3a1a; --bio-text: #a0d0a0;
-  --eng-bg: #1a2a4a; --eng-text: #80b0e0;
-  --chem-bg: #2a1a3a; --chem-text: #c080d0;
-  --arabic-bg: #3a2a0a; --arabic-text: #e0c060;
-  --off-bg: #2a2a2a; --off-text: #a0a0a0;
+  --hero-bg: linear-gradient(135deg, #5a205a, #3a103a);
+  --shadow-color: rgba(0, 0, 0, 0.4);
+  
+  --bio-color: #81c784;
+  --eng-color: #64b5f6;
+  --chem-color: #ba68c8;
+  --arabic-color: #ff8a65;
+  --off-color: #90a4ae;
 }
 
-* { box-sizing: border-box; transition: background-color 0.3s, color 0.3s, border 0.3s; }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
   font-family: 'Cairo', sans-serif;
-  margin: 0;
-  padding: 15px 10px 30px;
   background: var(--bg-gradient);
   min-height: 100vh;
   color: var(--text-main);
+  padding: 10px 8px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-/* ===== زخارف ===== */
-.floating-decorations { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
-.decor-item { position: absolute; font-size: 22px; animation: floatAnim 7s infinite ease-in-out; opacity: 0.5; }
-@keyframes floatAnim {
-  0% { transform: translateY(105vh) rotate(0deg); opacity: 0; }
-  20% { opacity: 0.6; }
-  80% { opacity: 0.6; }
-  100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
-}
-
-/* ===== شريط التحكم الثابت (Sticky) ===== */
+/* ===== أزرار التحكم ===== */
 .control-bar {
   position: sticky;
-  top: 10px;
-  z-index: 50;
+  top: 8px;
+  z-index: 100;
   display: flex;
   justify-content: center;
-  gap: 12px;
-  padding: 8px 12px;
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-radius: 60px;
-  margin-bottom: 15px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-  border: 1px solid rgba(255,255,255,0.3);
-  flex-wrap: wrap;
+  gap: 10px;
+  padding: 6px 12px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 30px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  border: 1px solid rgba(255,255,255,0.4);
+  width: 100%;
+  max-width: 480px;
 }
+
 [data-theme="dark"] .control-bar {
-  background: rgba(30, 30, 50, 0.85);
-  border-color: #444;
+  background: rgba(25, 18, 32, 0.85);
+  border-color: rgba(255,255,255,0.1);
 }
 
 .ctrl-btn {
-  padding: 8px 20px;
+  flex: 1;
+  padding: 8px 12px;
   border: none;
-  border-radius: 40px;
+  border-radius: 20px;
   font-family: 'Cairo', sans-serif;
-  font-weight: bold;
-  font-size: 14px;
+  font-weight: 700;
+  font-size: 13px;
   cursor: pointer;
-  min-height: 44px; /* مناسب للمس */
+  min-height: 40px;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  transition: transform 0.2s, box-shadow 0.2s;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
-.ctrl-btn:active { transform: scale(0.95); }
 
-.edit-btn { background: var(--edit-btn-bg); color: #fff; }
-.edit-btn.active { background: #2e7d32; animation: pulseGreen 1.5s infinite alternate; }
-@keyframes pulseGreen { from { box-shadow: 0 0 5px #2e7d32; } to { box-shadow: 0 0 20px #4caf50; } }
+.edit-btn { background: var(--edit-btn-bg); }
+.edit-btn.active { background: #2e7d32; }
+.theme-btn { background: var(--theme-btn-bg); }
 
-.theme-btn { background: var(--theme-btn-bg); color: #fff; }
-
-/* ===== الحاوية ===== */
+/* ===== الحاوية الرئيسية ===== */
 .kitty-container {
   width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
+  max-width: 480px;
   background: var(--container-bg);
-  border-radius: 40px;
-  padding: 15px;
-  box-shadow: 0 10px 30px var(--shadow-color);
-  border: 4px solid var(--container-border);
-  position: relative;
-  z-index: 1;
+  border-radius: 28px;
+  padding: 12px;
+  box-shadow: 0 8px 24px var(--shadow-color);
+  border: 2px solid var(--container-border);
 }
 
-/* ===== بطاقة الحصة ===== */
+/* ===== بطاقة الحصة القادمة ===== */
 .next-lesson-card {
   background: var(--hero-bg);
   color: #fff;
-  border-radius: 25px;
-  padding: 14px 20px;
-  margin-bottom: 18px;
+  border-radius: 20px;
+  padding: 12px 15px;
+  margin-bottom: 12px;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 10px;
-  border: 2px solid rgba(255,255,255,0.4);
-  animation: pulseGlow 3s infinite alternate;
+  text-align: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(255, 20, 147, 0.25);
 }
-@keyframes pulseGlow { from { box-shadow: 0 5px 15px rgba(255,20,147,0.3); } to { box-shadow: 0 10px 25px rgba(255,20,147,0.6); } }
 
-.next-lesson-info h2 { margin: 0; font-size: 14px; opacity: 0.9; }
-.next-lesson-info .subject-title { font-size: 22px; font-family: 'Baloo Bhaijaan 2', sans-serif; margin: 0; font-weight: 800; text-shadow: 1px 1px 3px rgba(0,0,0,0.2); }
-.next-lesson-timer { background: rgba(255,255,255,0.2); backdrop-filter: blur(8px); padding: 6px 16px; border-radius: 20px; text-align: center; border: 1px solid rgba(255,255,255,0.3); min-width: 140px; }
-.next-lesson-timer .timer-val { font-size: 18px; font-weight: 900; display: block; font-family: 'Baloo Bhaijaan 2', sans-serif; }
-.next-lesson-timer .timer-lbl { font-size: 11px; opacity: 0.9; font-weight: bold; }
+.next-lesson-info h2 { font-size: 12px; opacity: 0.9; }
+.next-lesson-info .subject-title { font-size: 18px; font-family: 'Baloo Bhaijaan 2', sans-serif; font-weight: 800; }
+.next-lesson-timer {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 16px;
+  border-radius: 16px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+.next-lesson-timer .timer-val { font-size: 15px; font-weight: 900; font-family: 'Baloo Bhaijaan 2', sans-serif; }
+.next-lesson-timer .timer-lbl { font-size: 11px; opacity: 0.9; }
 
 /* ===== رأس القطة ===== */
 .kitty-head {
   background: #ff99cc;
-  height: 70px;
-  position: relative;
-  border-radius: 35px 35px 0 0;
+  height: 52px;
+  border-radius: 20px 20px 0 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  font-size: 26px;
+  gap: 8px;
+  font-size: 20px;
   font-weight: 900;
   color: #fff;
-  text-shadow: 2px 2px #e6007e;
+  text-shadow: 1px 1px #e6007e;
   font-family: 'Baloo Bhaijaan 2', sans-serif;
+  position: relative;
 }
-[data-theme="dark"] .kitty-head { background: #7a3a7a; text-shadow: 2px 2px #4a1a4a; }
-.kitty-head::before, .kitty-head::after {
-  content: ''; position: absolute; top: -25px; width: 0; height: 0;
-  border-left: 30px solid transparent; border-right: 30px solid transparent;
-  border-bottom: 30px solid #ff99cc;
-}
-[data-theme="dark"] .kitty-head::before, [data-theme="dark"] .kitty-head::after { border-bottom-color: #7a3a7a; }
-.kitty-head::before { right: 30px; }
-.kitty-head::after { left: 30px; }
-.bow { position: absolute; top: -15px; left: 50%; transform: translateX(-50%) rotate(-10deg); font-size: 40px; z-index: 10; animation: bowWiggle 2.5s infinite alternate; cursor: pointer; }
-@keyframes bowWiggle { 0% { transform: translateX(-50%) rotate(-12deg); } 100% { transform: translateX(-50%) rotate(12deg); } }
-.hello-kitty-icon { width: 40px; height: 40px; border-radius: 50%; background: #fff; padding: 3px; border: 2px solid #ff66a3; object-fit: contain; }
+[data-theme="dark"] .kitty-head { background: #6a2a6a; text-shadow: 1px 1px #3a1a3a; }
+.bow { font-size: 26px; }
+.hello-kitty-icon { width: 32px; height: 32px; border-radius: 50%; background: #fff; padding: 2px; }
 
 /* ===== الصندوق الداخلي ===== */
-.inner-box { background: var(--inner-bg); border-radius: 20px; padding: 15px; border: 3px dashed var(--inner-border); }
-h1 { text-align: center; color: var(--title-color); font-size: 22px; margin: 0 0 10px 0; }
-.edit-status { text-align: center; font-size: 14px; font-weight: bold; color: var(--title-color); background: var(--inner-bg); padding: 6px; border-radius: 20px; margin-bottom: 12px; border: 2px dashed var(--inner-border); display: none; }
+.inner-box {
+  background: var(--inner-bg);
+  border-radius: 0 0 18px 18px;
+  padding: 10px;
+  border: 2px dashed var(--inner-border);
+  border-top: none;
+}
+
+h1 { text-align: center; color: var(--title-color); font-size: 16px; margin-bottom: 8px; }
+.edit-status { text-align: center; font-size: 12px; font-weight: bold; color: #2e7d32; padding: 4px; display: none; }
 .edit-status.show { display: block; }
 
-/* ===== الجدول (تصميم البطاقات للجوال) ===== */
-.table-wrapper { overflow-x: auto; }
-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
-thead th { display: none; } /* إخفاء رأس الجدول في الجوال */
+/* ===== عرض جدول الدروس كبطاقات منظم للجوال ===== */
+.table-wrapper { width: 100%; }
+table { width: 100%; border-collapse: collapse; }
+thead { display: none; } /* إخفاء الهيدر تماماً */
 
-tr { 
-  display: block;
+tr {
+  display: flex;
+  flex-direction: column;
   background: var(--table-bg);
-  border-radius: 20px;
-  padding: 12px;
-  margin-bottom: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  border-radius: 16px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
   border: 1px solid var(--container-border);
-  transition: all 0.3s;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+  position: relative;
 }
+
+/* تمييز اليوم الحالي */
+tr.today-highlight {
+  border: 2px solid #ff1493 !important;
+  background: #fff0f6 !important;
+}
+[data-theme="dark"] tr.today-highlight {
+  border-color: #f080b0 !important;
+  background: #341a34 !important;
+}
+
 td {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 4px;
+  padding: 4px 0;
   border: none;
-  background: transparent !important;
-  color: var(--text-main);
-  font-weight: bold;
-  font-size: 15px;
-  border-bottom: 1px dashed rgba(0,0,0,0.05);
+  font-size: 14px;
 }
-td:last-child { border-bottom: none; }
-td:first-child {
+
+/* اليوم كعنوان أعلى البطاقة */
+td:nth-child(1) {
   background: var(--day-bg);
   color: var(--day-text);
-  padding: 8px 14px;
-  border-radius: 40px;
-  display: inline-flex;
-  justify-content: center;
-  width: auto;
-  font-size: 16px;
-  margin-bottom: 6px;
-  border: none;
-}
-td::before {
-  content: attr(data-label);
-  font-weight: 700;
-  color: var(--title-color);
+  padding: 3px 12px;
+  border-radius: 12px;
   font-size: 13px;
-  margin-left: 10px;
-  opacity: 0.8;
+  font-weight: 700;
+  align-self: flex-start;
+  margin-bottom: 6px;
 }
-td:first-child::before { display: none; }
 
-/* إعادة تعيين ألوان المواد (تطبق على النص فقط داخل البطاقة) */
-tr.bio td:nth-child(2) { color: var(--bio-text); }
-tr.eng td:nth-child(2) { color: var(--eng-text); }
-tr.chem td:nth-child(2) { color: var(--chem-text); }
-tr.arabic td:nth-child(2) { color: var(--arabic-text); }
-tr.off td:nth-child(2) { color: var(--off-text); }
+/* المادة */
+td:nth-child(2) {
+  font-size: 16px;
+  font-weight: 800;
+}
+tr.bio td:nth-child(2) { color: var(--bio-color); }
+tr.eng td:nth-child(2) { color: var(--eng-color); }
+tr.chem td:nth-child(2) { color: var(--chem-color); }
+tr.arabic td:nth-child(2) { color: var(--arabic-color); }
+tr.off td:nth-child(2) { color: var(--off-color); }
 
-/* تمييز اليوم */
-tr.today-highlight { border: 3px solid #ff1493 !important; background: #ffe6f2 !important; }
-[data-theme="dark"] tr.today-highlight { border-color: #c060c0 !important; background: #3a1a3a !important; }
+/* تسمية العناصر للجوال */
+td:nth-child(2)::before { content: "المادة: "; font-size: 12px; color: var(--text-main); opacity: 0.6; font-weight: normal; }
+td:nth-child(3)::before { content: "الوقت: "; font-size: 12px; color: var(--text-main); opacity: 0.6; font-weight: normal; }
+td:nth-child(4)::before { content: "ملاحظات: "; font-size: 12px; color: var(--text-main); opacity: 0.6; font-weight: normal; }
 
 /* الخلايا القابلة للتعديل */
-.editable-cell { outline: none; padding: 2px 6px; border-radius: 8px; flex: 1; text-align: left; min-height: 32px; }
-.editable-cell[contenteditable="true"] { border: 2px dashed var(--title-color) !important; background: rgba(255,255,255,0.5) !important; cursor: text; }
-[data-theme="dark"] .editable-cell[contenteditable="true"] { background: rgba(60,30,60,0.7) !important; }
+.editable-cell {
+  outline: none;
+  border-radius: 6px;
+  padding: 2px 4px;
+}
+.editable-cell[contenteditable="true"] {
+  border: 1px dashed var(--title-color) !important;
+  background: rgba(255, 255, 255, 0.8) !important;
+}
+[data-theme="dark"] .editable-cell[contenteditable="true"] {
+  background: rgba(0, 0, 0, 0.3) !important;
+}
 
-/* ===== شارات العداد ===== */
-.countdown-badge { display: inline-block; margin-top: 4px; padding: 4px 12px; background: #ad1457; color: #fff; font-size: 12px; border-radius: 14px; font-weight: bold; }
-.countdown-badge.active { background: #2e7d32; animation: pulseActive 1s infinite alternate; }
-@keyframes pulseActive { from { transform: scale(1); } to { transform: scale(1.05); } }
+/* العداد */
+.countdown-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: #ad1457;
+  color: #fff;
+  font-weight: bold;
+}
+.countdown-badge.active { background: #2e7d32; }
 
-/* ===== ملاحظات ===== */
-.goals-note { margin-top: 20px; background: var(--note-bg); border-right: 6px solid var(--note-border); padding: 12px; border-radius: 12px; }
-.goals-note h3 { margin: 0 0 6px 0; color: var(--note-title); font-size: 15px; }
-.goals-note textarea { width: 100%; border: none; background: transparent; font-family: 'Cairo', sans-serif; resize: vertical; outline: none; color: var(--note-text); font-size: 15px; min-height: 60px; }
+/* ===== الملاحظات والأهداف ===== */
+.goals-note {
+  margin-top: 12px;
+  background: var(--note-bg);
+  border-right: 4px solid var(--note-border);
+  padding: 8px 10px;
+  border-radius: 10px;
+}
+.goals-note h3 { font-size: 13px; color: var(--note-border); margin-bottom: 4px; }
+.goals-note textarea {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-family: 'Cairo', sans-serif;
+  font-size: 13px;
+  color: var(--text-main);
+  outline: none;
+  resize: none;
+}
 
 /* ===== التذييل ===== */
-.footer-section { text-align: center; margin-top: 20px; }
-.print-btn { background: linear-gradient(45deg, #ff66a3, #ff80ab); color: #fff; border: none; padding: 12px 25px; font-size: 16px; font-weight: bold; border-radius: 40px; cursor: pointer; min-height: 48px; box-shadow: 0 4px 10px rgba(255,102,163,0.4); transition: transform 0.2s; }
-.print-btn:active { transform: scale(0.96); }
-.footer-note { margin-top: 15px; color: var(--footer-text); font-weight: bold; background: var(--footer-bg); padding: 10px; border-radius: 50px; font-size: 14px; line-height: 1.6; }
-
-/* ===== تحسينات الجوال العميقة جداً ===== */
-@media (max-width: 650px) {
-  body { padding: 8px 6px 20px; }
-  .control-bar { top: 6px; padding: 6px 10px; gap: 8px; border-radius: 40px; }
-  .ctrl-btn { font-size: 13px; padding: 6px 14px; min-height: 40px; }
-  
-  .kitty-container { padding: 10px; border-radius: 30px; }
-  .kitty-head { height: 60px; font-size: 20px; gap: 6px; }
-  .kitty-head::before, .kitty-head::after { top: -20px; border-left-width: 22px; border-right-width: 22px; border-bottom-width: 22px; }
-  .kitty-head::before { right: 20px; }
-  .kitty-head::after { left: 20px; }
-  .bow { font-size: 30px; top: -12px; }
-  .hello-kitty-icon { width: 30px; height: 30px; }
-  
-  .inner-box { padding: 10px; }
-  h1 { font-size: 18px; }
-  
-  .next-lesson-card { flex-direction: column; align-items: stretch; text-align: center; padding: 12px; }
-  .next-lesson-info .subject-title { font-size: 18px; }
-  .next-lesson-timer { min-width: unset; width: 100%; }
-  .next-lesson-timer .timer-val { font-size: 16px; }
-
-  /* إخفاء الزخارف على الجوال */
-  .floating-decorations { display: none; }
-
-  /* تحسين عرض البطاقات */
-  tr { padding: 10px; margin-bottom: 10px; }
-  td { 
-    font-size: 14px; 
-    padding: 6px 2px; 
-    flex-wrap: wrap; 
-    gap: 4px;
-  }
-  td:first-child { font-size: 14px; padding: 4px 14px; }
-  td::before { font-size: 12px; min-width: 60px; }
-  .editable-cell { font-size: 14px; min-height: 28px; }
-  
-  .countdown-badge { font-size: 11px; padding: 2px 10px; }
-  .goals-note textarea { font-size: 14px; min-height: 50px; }
-  .print-btn { font-size: 14px; padding: 10px 20px; min-height: 44px; }
-  .footer-note { font-size: 13px; }
+.footer-section { text-align: center; margin-top: 12px; }
+.print-btn {
+  background: linear-gradient(45deg, #ff66a3, #ff80ab);
+  color: #fff;
+  border: none;
+  padding: 8px 20px;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 20px;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(255,102,163,0.3);
+}
+.footer-note {
+  margin-top: 10px;
+  color: var(--footer-text);
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 1.4;
 }
 
-/* شاشات صغيرة جداً (أقل من 400px) */
-@media (max-width: 400px) {
-  .ctrl-btn { font-size: 12px; padding: 4px 10px; min-height: 36px; }
-  .kitty-head { font-size: 17px; height: 50px; }
-  .kitty-head::before, .kitty-head::after { display: none; } /* إخفاء الأذنين في الشاشات الصغيرة جداً */
-  td { font-size: 13px; flex-direction: column; align-items: flex-start; }
-  td::before { margin-left: 0; }
-  .editable-cell { width: 100%; text-align: right; }
-}
-
-/* ===== الطباعة ===== */
-@media print {
-  .control-bar, .print-btn, .floating-decorations, .edit-status { display: none !important; }
-  .kitty-container { box-shadow: none !important; border: 2px solid #ccc !important; }
-  body { background: #fff !important; }
-  [data-theme="dark"] .kitty-container { background: #fff !important; }
-  [data-theme="dark"] td { color: #222 !important; background: #f9f9f9 !important; }
-  tr.today-highlight { border: 2px solid #f06292 !important; background: #fce4ec !important; }
-}
+.floating-decorations { display: none; } /* إخفاء الزخارف العائمة تماماً لعدم إبطاء الجوال */
