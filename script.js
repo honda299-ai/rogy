@@ -109,7 +109,7 @@ function parseTimeRange(timeStr) {
   return { start, end };
 }
 
-// ===== تبديل وضع التعديل (جعله عاماً للوصول من onclick) =====
+// ===== تبديل وضع التعديل =====
 window.toggleEditMode = function() {
   isEditing = !isEditing;
   const btn = document.getElementById('editBtn');
@@ -128,7 +128,6 @@ window.toggleEditMode = function() {
     status.classList.remove('show');
     cells.forEach(cell => cell.contentEditable = "false");
 
-    // جمع البيانات وحفظها
     const rows = document.querySelectorAll('#schedule-body tr');
     const updatedSchedule = [];
     rows.forEach((tr, index) => {
@@ -171,7 +170,7 @@ function updateCountdowns() {
   const now = new Date();
   const currentJSDay = now.getDay();
 
-  // تمييز اليوم
+  // تمييز اليوم الحالي
   document.querySelectorAll("tbody tr").forEach(row => {
     const rowDay = parseInt(row.getAttribute("data-day"), 10);
     if (rowDay === currentJSDay) {
@@ -181,7 +180,7 @@ function updateCountdowns() {
     }
   });
 
-  // إيجاد الدرس القادم
+  // إيجاد الدرس القادم للبطاقة العلوية
   let nextLessonCandidate = null;
   let minDiffMs = Infinity;
 
@@ -201,6 +200,7 @@ function updateCountdowns() {
     if (now >= lessonStart && now <= lessonEnd) {
       isOngoing = true;
     } else if (now > lessonEnd) {
+      // إذا انتهى موعد درس هذا الأسبوع، الانتقال لموعد الأسبوع القادم
       lessonStart.setDate(lessonStart.getDate() + 7);
       lessonEnd.setDate(lessonEnd.getDate() + 7);
     }
@@ -222,7 +222,7 @@ function updateCountdowns() {
     heroSubject.innerText = `${nextLessonCandidate.subject} (${nextLessonCandidate.dayName})`;
     if (nextLessonCandidate.isOngoing) {
       heroStatus.innerText = "🔥 الدرس الحالي الجاري:";
-      heroTimer.innerText = "الحصة شغالّه دلوقتي! 📚";
+      heroTimer.innerText = "الحصة شغّالة دلوقتي! 📚";
     } else {
       heroStatus.innerText = "متبقي على بداية الدرس:";
       const totalSecs = Math.floor(nextLessonCandidate.diffMs / 1000);
@@ -248,7 +248,7 @@ function updateCountdowns() {
     heroTimer.innerText = "-- : --";
   }
 
-  // تحديث شارات الصفوف
+  // تحديث شارات الصفوف داخل الجدول
   document.querySelectorAll("#schedule-body tr").forEach((tr, idx) => {
     const item = currentScheduleData[idx];
     const badge = tr.querySelector(".countdown");
@@ -274,16 +274,23 @@ function updateCountdowns() {
     let lessonEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate() + dayDiff,
       timeRange.end.hours, timeRange.end.minutes, 0);
 
+    // إذا كان الموعد قد انتهى في اليوم الحالي، نحسب لموعد الأسبوع القادم
+    if (now > lessonEnd) {
+      lessonStart.setDate(lessonStart.getDate() + 7);
+      lessonEnd.setDate(lessonEnd.getDate() + 7);
+    }
+
     if (now >= lessonStart && now <= lessonEnd) {
       badge.className = "countdown countdown-badge active";
-      badge.innerText = "🔔 الحصه شغالة دلوقتي!";
-    } else if (now < lessonStart) {
+      badge.innerText = "🔔 الحصة شغالة دلوقتي!";
+    } else {
+      badge.className = "countdown countdown-badge";
       const diffMs = lessonStart - now;
       const totalSecs = Math.floor(diffMs / 1000);
       const days = Math.floor(totalSecs / (3600 * 24));
       const hours = Math.floor((totalSecs % (3600 * 24)) / 3600);
       const mins = Math.floor((totalSecs % 3600) / 60);
-      badge.className = "countdown countdown-badge";
+
       if (days === 0) {
         if (hours > 0) {
           badge.innerText = `⏳ متبقي ${hours}س و ${mins}د`;
@@ -293,14 +300,8 @@ function updateCountdowns() {
       } else if (days === 1) {
         badge.innerText = `⏳ غداً في نفس الموعد`;
       } else {
-        badge.innerText = `⏳ بعد ${days} أيام`;
+        badge.innerText = `⏳ متبقي ${days} أيام`;
       }
-    } else {
-      badge.className = "countdown countdown-badge";
-      const diffDays = Math.floor((now - lessonEnd) / (1000 * 60 * 60 * 24));
-      if (diffDays === 0) badge.innerText = `⌛ انتهت حِصّة اليوم`;
-      else if (diffDays === 1) badge.innerText = `⌛ انتهت أمس`;
-      else badge.innerText = `⌛ انتهت منذ ${diffDays} أيام`;
     }
   });
 }
