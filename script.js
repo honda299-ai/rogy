@@ -38,7 +38,7 @@ onValue(scheduleRef, (snapshot) => {
   currentScheduleData = data || defaultSchedule;
   renderTable(currentScheduleData);
   if (!data) set(scheduleRef, defaultSchedule);
-  updateCountdowns();
+  updateHighlights();
 });
 
 // ===== مراقبة الأهداف =====
@@ -54,7 +54,7 @@ document.getElementById('goals-input').addEventListener('input', (e) => {
   set(goalsRef, e.target.value);
 });
 
-// ===== عرض الجدول =====
+// ===== عرض الجدول بدون أي عداد =====
 function renderTable(data) {
   const tbody = document.getElementById('schedule-body');
   tbody.innerHTML = '';
@@ -68,45 +68,11 @@ function renderTable(data) {
       <td class="editable-cell" contenteditable="${isEditing}">${row.subject}</td>
       <td>
         <span class="time-text editable-cell" contenteditable="${isEditing}">${row.time}</span>
-        <br><span class="countdown"></span>
       </td>
       <td class="editable-cell" contenteditable="${isEditing}">${row.notes}</td>
     `;
     tbody.appendChild(tr);
   });
-}
-
-// ===== تحليل الوقت =====
-function parseTimeRange(timeStr) {
-  if (!timeStr || timeStr.includes("---") || timeStr.trim() === "") return null;
-  const parts = timeStr.split("-").map(s => s.trim());
-  if (parts.length < 2) return null;
-
-  function parseSingleTime(str) {
-    if (!str) return null;
-    const s = str.trim().toLowerCase();
-    const isPM = s.includes("م") || s.includes("pm") || s.includes("مساء");
-    const isAM = s.includes("ص") || s.includes("am") || s.includes("صباح");
-    const match = s.match(/(\d{1,2})(?::(\d{1,2}))?/);
-    if (!match) return null;
-    let hours = parseInt(match[1], 10);
-    let minutes = match[2] ? parseInt(match[2], 10) : 0;
-    if (isNaN(hours)) return null;
-    if (isNaN(minutes)) minutes = 0;
-    if (isPM) {
-      if (hours < 12) hours += 12;
-    } else if (isAM) {
-      if (hours === 12) hours = 0;
-    } else {
-      if (hours >= 1 && hours <= 6) hours += 12;
-    }
-    return { hours, minutes };
-  }
-
-  const start = parseSingleTime(parts[0]);
-  const end = parseSingleTime(parts[1]);
-  if (!start || !end) return null;
-  return { start, end };
 }
 
 // ===== تبديل وضع التعديل =====
@@ -165,12 +131,11 @@ window.toggleTheme = function() {
   }
 };
 
-// ===== تحديث العدادات =====
-function updateCountdowns() {
+// ===== تمييز اليوم الحالي فقط بدون عداد =====
+function updateHighlights() {
   const now = new Date();
   const currentJSDay = now.getDay();
 
-  // تمييز اليوم الحالي
   document.querySelectorAll("tbody tr").forEach(row => {
     const rowDay = parseInt(row.getAttribute("data-day"), 10);
     if (rowDay === currentJSDay) {
@@ -179,131 +144,6 @@ function updateCountdowns() {
       row.classList.remove("today-highlight");
     }
   });
-
-  // إيجاد الدرس القادم للبطاقة العلوية
-  let nextLessonCandidate = null;
-  let minDiffMs = Infinity;
-
-  currentScheduleData.forEach(item => {
-    const isOff = item.class === "off" || (item.subject && item.subject.includes("إجازة"));
-    if (isOff) return;
-    const timeRange = parseTimeRange(item.time);
-    if (!timeRange) return;
-
-    let dayDiff = item.dataDay - currentJSDay;
-    let lessonStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() + dayDiff,
-      timeRange.start.hours, timeRange.start.minutes, 0);
-    let lessonEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate() + dayDiff,
-      timeRange.end.hours, timeRange.end.minutes, 0);
-
-    let isOngoing = false;
-    if (now >= lessonStart && now <= lessonEnd) {
-      isOngoing = true;
-    } else if (now > lessonEnd) {
-      // إذا انتهى موعد درس هذا الأسبوع، الانتقال لموعد الأسبوع القادم
-      lessonStart.setDate(lessonStart.getDate() + 7);
-      lessonEnd.setDate(lessonEnd.getDate() + 7);
-    }
-
-    let diffMs = lessonStart - now;
-    if (isOngoing) diffMs = -1;
-    if (diffMs < minDiffMs) {
-      minDiffMs = diffMs;
-      nextLessonCandidate = { subject: item.subject, dayName: item.day, isOngoing, diffMs };
-    }
-  });
-
-  // تحديث البطاقة العلوية
-  const heroSubject = document.getElementById("hero-subject");
-  const heroTimer = document.getElementById("hero-timer");
-  const heroStatus = document.getElementById("hero-status");
-
-  if (nextLessonCandidate) {
-    heroSubject.innerText = `${nextLessonCandidate.subject} (${nextLessonCandidate.dayName})`;
-    if (nextLessonCandidate.isOngoing) {
-      heroStatus.innerText = "🔥 الدرس الحالي الجاري:";
-      heroTimer.innerText = "الحصة شغّالة دلوقتي! 📚";
-    } else {
-      heroStatus.innerText = "متبقي على بداية الدرس:";
-      const totalSecs = Math.floor(nextLessonCandidate.diffMs / 1000);
-      if (totalSecs < 0) {
-        heroTimer.innerText = "⏳ يبدأ قريباً جداً!";
-      } else {
-        const days = Math.floor(totalSecs / (3600 * 24));
-        const hours = Math.floor((totalSecs % (3600 * 24)) / 3600);
-        const mins = Math.floor((totalSecs % 3600) / 60);
-        const secs = totalSecs % 60;
-        if (days > 0) {
-          heroTimer.innerText = `${days} يوم و ${hours}س : ${mins}د`;
-        } else if (hours > 0) {
-          heroTimer.innerText = `${hours}س : ${mins}د : ${secs}ث`;
-        } else {
-          heroTimer.innerText = `${mins} دقيقة : ${secs} ثانية`;
-        }
-      }
-    }
-  } else {
-    heroSubject.innerText = "مفيش دروس جايه والعه معاك 🎉";
-    heroStatus.innerText = "استمتعي بوقتك!";
-    heroTimer.innerText = "-- : --";
-  }
-
-  // تحديث شارات الصفوف داخل الجدول
-  document.querySelectorAll("#schedule-body tr").forEach((tr, idx) => {
-    const item = currentScheduleData[idx];
-    const badge = tr.querySelector(".countdown");
-    if (!badge || !item) return;
-
-    const isOff = item.class === "off" || (item.subject && item.subject.includes("إجازة"));
-    if (isOff) {
-      badge.style.display = "none";
-      return;
-    }
-
-    const timeRange = parseTimeRange(item.time);
-    if (!timeRange) {
-      badge.style.display = "none";
-      return;
-    }
-
-    badge.style.display = "inline-block";
-
-    let dayDiff = item.dataDay - currentJSDay;
-    let lessonStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() + dayDiff,
-      timeRange.start.hours, timeRange.start.minutes, 0);
-    let lessonEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate() + dayDiff,
-      timeRange.end.hours, timeRange.end.minutes, 0);
-
-    // إذا كان الموعد قد انتهى في اليوم الحالي، نحسب لموعد الأسبوع القادم
-    if (now > lessonEnd) {
-      lessonStart.setDate(lessonStart.getDate() + 7);
-      lessonEnd.setDate(lessonEnd.getDate() + 7);
-    }
-
-    if (now >= lessonStart && now <= lessonEnd) {
-      badge.className = "countdown countdown-badge active";
-      badge.innerText = "🔔 الحصة شغالة دلوقتي!";
-    } else {
-      badge.className = "countdown countdown-badge";
-      const diffMs = lessonStart - now;
-      const totalSecs = Math.floor(diffMs / 1000);
-      const days = Math.floor(totalSecs / (3600 * 24));
-      const hours = Math.floor((totalSecs % (3600 * 24)) / 3600);
-      const mins = Math.floor((totalSecs % 3600) / 60);
-
-      if (days === 0) {
-        if (hours > 0) {
-          badge.innerText = `⏳ متبقي ${hours}س و ${mins}د`;
-        } else {
-          badge.innerText = `⏳ متبقي ${mins}د فقط!`;
-        }
-      } else if (days === 1) {
-        badge.innerText = `⏳ غداً في نفس الموعد`;
-      } else {
-        badge.innerText = `⏳ متبقي ${days} أيام`;
-      }
-    }
-  });
 }
 
-setInterval(updateCountdowns, 1000);
+setInterval(updateHighlights, 1000);
