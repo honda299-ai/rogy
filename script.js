@@ -31,7 +31,51 @@ let currentScheduleData = [];
 const scheduleRef = ref(db, 'schedule');
 const goalsRef = ref(db, 'goals');
 
-// ===== مراقبة الجدول =====
+// ===== إدارة واسترجاع الثيم المحفوظ (LocalStorage) =====
+function applySavedTheme() {
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  document.body.setAttribute('data-theme', savedTheme);
+  
+  const icon = document.getElementById("theme-icon");
+  const text = document.getElementById("theme-text");
+  
+  if (savedTheme === 'dark') {
+    if (icon) icon.innerText = "☀️";
+    if (text) text.innerText = "فاتح";
+  } else {
+    if (icon) icon.innerText = "🌙";
+    if (text) text.innerText = "داكن";
+  }
+}
+
+// تطبيق الثيم فور فتح الصفحة
+applySavedTheme();
+
+// ===== تبديل وحفظ الثيم =====
+window.toggleTheme = function() {
+  const body = document.body;
+  const currentTheme = body.getAttribute("data-theme");
+  const newTheme = currentTheme === "dark" ? "light" : "dark";
+
+  // تطبيق الثيم الجديد
+  body.setAttribute("data-theme", newTheme);
+  
+  // حفظ الخيار في ذاكرة المتصفح
+  localStorage.setItem('theme', newTheme);
+
+  // تحديث نص وأيقونة الزر
+  const icon = document.getElementById("theme-icon");
+  const text = document.getElementById("theme-text");
+  if (newTheme === "dark") {
+    icon.innerText = "☀️";
+    text.innerText = "فاتح";
+  } else {
+    icon.innerText = "🌙";
+    text.innerText = "داكن";
+  }
+};
+
+// ===== مراقبة الجدول من الفايربيس =====
 onValue(scheduleRef, (snapshot) => {
   const data = snapshot.val();
   currentScheduleData = data || defaultSchedule;
@@ -40,7 +84,7 @@ onValue(scheduleRef, (snapshot) => {
   updateHighlightsAndHero();
 });
 
-// ===== مراقبة الأهداف =====
+// ===== مراقبة الأهداف من الفايربيس =====
 onValue(goalsRef, (snapshot) => {
   const goals = snapshot.val();
   const input = document.getElementById('goals-input');
@@ -112,25 +156,7 @@ window.toggleEditMode = function() {
   }
 };
 
-// ===== تبديل الثيم =====
-window.toggleTheme = function() {
-  const body = document.body;
-  const currentTheme = body.getAttribute("data-theme");
-  const icon = document.getElementById("theme-icon");
-  const text = document.getElementById("theme-text");
-
-  if (currentTheme === "dark") {
-    body.setAttribute("data-theme", "light");
-    icon.innerText = "🌙";
-    text.innerText = "داكن";
-  } else {
-    body.setAttribute("data-theme", "dark");
-    icon.innerText = "☀️";
-    text.innerText = "فاتح";
-  }
-};
-
-// ===== تمييز اليوم وتفعيل بطاقة الهيرو للدرس القادم =====
+// ===== تمييز اليوم الحالي وحدث الدرس التالي =====
 function updateHighlightsAndHero() {
   const now = new Date();
   const currentJSDay = now.getDay();
@@ -144,7 +170,6 @@ function updateHighlightsAndHero() {
     }
   });
 
-  // تحديث بطاقة الدرس الحالي/المقبل
   const todayData = currentScheduleData.find(item => item.dataDay === currentJSDay);
   const heroSubject = document.getElementById('hero-subject');
   const heroTimer = document.getElementById('hero-timer');
