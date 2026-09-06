@@ -28,33 +28,47 @@ const defaultSchedule = [
 
 let isEditing = false;
 let currentScheduleData = [];
+let goalsTimestamp = 0; // لتجنب التعارض
 
 const scheduleRef = ref(db, 'schedule');
 const goalsRef = ref(db, 'goals');
 
 // ===== مراقبة الجدول =====
 onValue(scheduleRef, (snapshot) => {
-  const data = snapshot.val();
-  currentScheduleData = data || defaultSchedule;
-  renderTable(currentScheduleData);
-  if (!data) set(scheduleRef, defaultSchedule);
-  updateHighlights();
+  try {
+    const data = snapshot.val();
+    currentScheduleData = data || defaultSchedule;
+    renderTable(currentScheduleData);
+    if (!data) set(scheduleRef, defaultSchedule);
+    updateHighlights();
+    updateNextLesson(); // تحديث الحصة القادمة
+  } catch (error) {
+    console.error("خطأ في قراءة الجدول:", error);
+  }
+}, (error) => {
+  console.error("فشل الاتصال بقاعدة البيانات:", error);
 });
 
-// ===== مراقبة الأهداف =====
+// ===== مراقبة الأهداف مع تجنب التعارض =====
 onValue(goalsRef, (snapshot) => {
   const goals = snapshot.val();
   const input = document.getElementById('goals-input');
+  // نمنع الكتابة فوق النص إذا كان المستخدم يحرر الحقل حالياً
   if (goals !== null && document.activeElement !== input) {
     input.value = goals;
   }
 });
 
-document.getElementById('goals-input').addEventListener('input', (e) => {
-  set(goalsRef, e.target.value);
+// عند فقدان التركيز (blur) نقوم بحفظ النص مع طابع زمني
+document.getElementById('goals-input').addEventListener('blur', (e) => {
+  const value = e.target.value;
+  const now = Date.now();
+  // نرسل قيمة مع طابع زمني (يمكن تخزينه في Firebase)
+  set(goalsRef, value).catch(err => console.error("فشل حفظ الأهداف:", err));
+  goalsTimestamp = now;
 });
 
-// ===== عرض الجدول بدون أي عداد =====
+// ===== عرض الجدول =====
 function renderTable(data) {
   const tbody = document.getElementById('schedule-body');
   tbody.innerHTML = '';
@@ -94,22 +108,25 @@ window.toggleEditMode = function() {
     status.classList.remove('show');
     cells.forEach(cell => cell.contentEditable = "false");
 
+    // جمع البيانات مع الاعتماد على data-day
     const rows = document.querySelectorAll('#schedule-body tr');
     const updatedSchedule = [];
-    rows.forEach((tr, index) => {
+    rows.forEach((tr) => {
       const tds = tr.querySelectorAll('td');
-      const originalRow = currentScheduleData[index] || {};
+      const dataDay = parseInt(tr.getAttribute('data-day'), 10);
+      // نبحث عن الصف الأصلي بنفس dataDay للحفاظ على الخصائص الأخرى
+      const originalRow = currentScheduleData.find(r => r.dataDay === dataDay) || {};
       const timeText = tr.querySelector('.time-text')?.innerText?.trim() || originalRow.time || "";
       updatedSchedule.push({
         day: tds[0]?.innerText?.trim() || originalRow.day || "",
-        dataDay: originalRow.dataDay ?? 0,
+        dataDay: dataDay,
         class: originalRow.class || "",
         subject: tds[1]?.innerText?.trim() || originalRow.subject || "",
         time: timeText,
         notes: tds[3]?.innerText?.trim() || originalRow.notes || ""
       });
     });
-    set(scheduleRef, updatedSchedule);
+    set(scheduleRef, updatedSchedule).catch(err => console.error("فشل حفظ الجدول:", err));
   }
 };
 
@@ -131,7 +148,7 @@ window.toggleTheme = function() {
   }
 };
 
-// ===== تمييز اليوم الحالي فقط بدون عداد =====
+// ===== تمييز اليوم الحالي (كل دقيقة) =====
 function updateHighlights() {
   const now = new Date();
   const currentJSDay = now.getDay();
@@ -146,4 +163,80 @@ function updateHighlights() {
   });
 }
 
-setInterval(updateHighlights, 1000);
+// ===== حساب الحصة القادمة =====
+function updateNextLesson() {
+  const now = new Date();
+  const currentDay = now.getDay(); // 0=أحد .. 6=سبت
+  const currentHours = now.getHours();
+  const currentMinutes = now.getMinutes();
+  const currentTotalMinutes = currentHours * 60 + currentMinutes;
+
+  // نبحث في الجدول عن اليوم الحالي ونتحقق من الوقت
+  let upcomingLesson = null;
+  let minDiff = Infinity;
+
+  // نكرر على الأيام من اليوم الحالي إلى الأسبوع القادم
+  for (let offset = 0; offset <= 7; offset++) {
+    const dayIndex = (currentDay + offset) % 7;
+    const dayData = currentScheduleData.find(r => r.dataDay === dayIndex);
+    if (!dayData) continue;
+    // نحلل الوقت (نتوقع صيغة "HH:MM - HH:MM")
+    const timeParts = dayData.time.split(' - ');
+    if (timeParts.length !== 2) continue;
+    const startTime = timeParts[0].trim();
+    const endTime = timeParts[1].trim();
+    if (startTime === "-----") continue;
+
+    // نحول وقت البداية إلى دقائق
+    const [startH, startM] = startTime.split(':').map(Number);
+    if (isNaN(startH) || isNaN(startM)) continue;
+    const startTotal = startH * 60 + startM;
+
+    // نحسب فارق الدقائق مع مراعاة الأيام
+    let diff = (startTotal - currentTotalMinutes) + (offset * 1440);
+    if (diff < 0) diff += 1440; // إذا كان الوقت قد مضى نأخذ اليوم التالي
+
+    if (diff < minDiff) {
+      minDiff = diff;
+      upcomingLesson = {
+        day: dayData.day,
+        subject: dayData.subject,
+        startTime: startTime,
+        endTime: endTime,
+        diffMinutes: diff,
+        isToday: (offset === 0 && startTotal > currentTotalMinutes) || (offset === 0 && startTotal <= currentTotalMinutes && offset === 0) // نحتاج منطق أفضل
+      };
+    }
+  }
+
+  // تصحيح منطق isToday: إذا كان offset=0 والوقت لم يبدأ بعد فهو اليوم، وإلا إذا كان offset=0 والوقت مضى نأخذ الغد
+  // لكننا بالفعل حسبنا diff، يمكننا تحديد if (diff < 1440) => اليوم
+  if (upcomingLesson) {
+    const diff = upcomingLesson.diffMinutes;
+    const isToday = diff < 1440;
+    const hours = Math.floor(diff / 60);
+    const minutes = diff % 60;
+    const seconds = Math.floor((diff % 1) * 60); // لا نحتاج للثواني لأننا نحدث كل دقيقة
+
+    document.getElementById('hero-subject').innerText = upcomingLesson.subject;
+    document.getElementById('hero-status').innerText = isToday ? "متبقي على البداية:" : "الدرس القادم (غداً أو بعد):";
+    document.getElementById('hero-timer').innerText = 
+      `${String(hours).padStart(2,'0')}س : ${String(minutes).padStart(2,'0')}د : 00ث`;
+  } else {
+    document.getElementById('hero-subject').innerText = "🎉 لا توجد حصص قادمة";
+    document.getElementById('hero-status').innerText = "استمتع بوقتك!";
+    document.getElementById('hero-timer').innerText = "✨ 🌸 ✨";
+  }
+}
+
+// تحديث الحصة القادمة كل دقيقة
+setInterval(updateNextLesson, 60000);
+
+// تحديث تمييز اليوم كل دقيقة
+setInterval(updateHighlights, 60000);
+
+// استدعاء أولي عند التحميل
+setTimeout(() => {
+  updateNextLesson();
+  updateHighlights();
+}, 100);
