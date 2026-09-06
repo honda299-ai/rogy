@@ -15,13 +15,12 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// ===== البيانات الافتراضية =====
 const defaultSchedule = [
-  { day: "السبت", dataDay: 6, class: "off", subject: "📖 إجازة / استذكار", time: "3:30 - 5:30", notes: "مراجعة أسبوعية" },
-  { day: "الأحد", dataDay: 0, class: "bio", subject: "🧬 أحياء", time: "3:30 - 5:30", notes: "حل أسئلة الفصل" },
-  { day: "الاثنين", dataDay: 1, class: "eng", subject: "🇬🇧 إنجليزي", time: "9:00 - 11:00", notes: "حفظ الكلمات" },
-  { day: "الثلاثاء", dataDay: 2, class: "chem", subject: "🧪 كيمياء", time: "8:00 - 10:00", notes: "اختبار قصير" },
-  { day: "الأربعاء", dataDay: 3, class: "arabic", subject: "📚 عربي", time: "8:00 - 10:00", notes: "قواعد ونصوص" },
+  { day: "السبت", dataDay: 6, class: "off", subject: "📖 إجازة / استذكار", time: "15:30", notes: "مراجعة أسبوعية" },
+  { day: "الأحد", dataDay: 0, class: "bio", subject: "🧬 أحياء", time: "15:30", notes: "حل أسئلة الفصل" },
+  { day: "الاثنين", dataDay: 1, class: "eng", subject: "🇬🇧 إنجليزي", time: "09:00", notes: "حفظ الكلمات" },
+  { day: "الثلاثاء", dataDay: 2, class: "chem", subject: "🧪 كيمياء", time: "08:00", notes: "اختبار قصير" },
+  { day: "الأربعاء", dataDay: 3, class: "arabic", subject: "📚 عربي", time: "08:00", notes: "قواعد ونصوص" },
   { day: "الخميس", dataDay: 4, class: "off", subject: "💻 إجازة", time: "-----", notes: "والعة معاك 🎉" },
   { day: "الجمعة", dataDay: 5, class: "off", subject: "☕ إجازة", time: "-----", notes: "الله يسهّلها 💕" }
 ];
@@ -38,7 +37,7 @@ onValue(scheduleRef, (snapshot) => {
   currentScheduleData = data || defaultSchedule;
   renderTable(currentScheduleData);
   if (!data) set(scheduleRef, defaultSchedule);
-  updateHighlights();
+  updateHighlightsAndHero();
 });
 
 // ===== مراقبة الأهداف =====
@@ -54,7 +53,7 @@ document.getElementById('goals-input').addEventListener('input', (e) => {
   set(goalsRef, e.target.value);
 });
 
-// ===== عرض الجدول بدون أي عداد =====
+// ===== عرض الجدول =====
 function renderTable(data) {
   const tbody = document.getElementById('schedule-body');
   tbody.innerHTML = '';
@@ -131,8 +130,8 @@ window.toggleTheme = function() {
   }
 };
 
-// ===== تمييز اليوم الحالي فقط بدون عداد =====
-function updateHighlights() {
+// ===== تمييز اليوم وتفعيل بطاقة الهيرو للدرس القادم =====
+function updateHighlightsAndHero() {
   const now = new Date();
   const currentJSDay = now.getDay();
 
@@ -144,6 +143,19 @@ function updateHighlights() {
       row.classList.remove("today-highlight");
     }
   });
+
+  // تحديث بطاقة الدرس الحالي/المقبل
+  const todayData = currentScheduleData.find(item => item.dataDay === currentJSDay);
+  const heroSubject = document.getElementById('hero-subject');
+  const heroTimer = document.getElementById('hero-timer');
+
+  if (todayData) {
+    heroSubject.innerText = todayData.subject;
+    heroTimer.innerText = todayData.time;
+  } else {
+    heroSubject.innerText = "مفيش حصص النهارده 🎉";
+    heroTimer.innerText = "-- : --";
+  }
 }
 
-setInterval(updateHighlights, 1000);
+setInterval(updateHighlightsAndHero, 1000);

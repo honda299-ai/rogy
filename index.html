@@ -2,9 +2,8 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>جدول الحصص 🎀</title>
-  <!-- ربط ملفات CSS و JavaScript -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body data-theme="light">
@@ -19,12 +18,10 @@
   </div>
 
   <!-- ===== أزرار التحكم ===== -->
-  <div class="control-buttons left">
+  <div class="top-bar">
     <button class="ctrl-btn theme-btn" onclick="toggleTheme()">
       <span id="theme-icon">🌙</span> <span id="theme-text">داكن</span>
     </button>
-  </div>
-  <div class="control-buttons right">
     <button class="ctrl-btn edit-btn" id="editBtn" onclick="toggleEditMode()">
       ✏️ <span id="edit-text">تعديل</span>
     </button>
@@ -36,21 +33,20 @@
     <!-- بطاقة الحصة القادمة -->
     <div class="next-lesson-card">
       <div class="next-lesson-info">
-        <h2>⏰ الدرس اللي جي:</h2>
-        <div class="subject-title" id="hero-subject">استني بحسبها مستسعجلنيش...</div>
+        <h2>⏰ الدرس اللي جاي:</h2>
+        <div class="subject-title" id="hero-subject">جاري الحساب...</div>
       </div>
       <div class="next-lesson-timer">
-        <span class="timer-lbl" id="hero-status">متبقي على البداية:</span>
-        <span class="timer-val" id="hero-timer">00س : 00د : 00ث</span>
+        <span class="timer-lbl" id="hero-status">حالة اليوم:</span>
+        <span class="timer-val" id="hero-timer">-- : --</span>
       </div>
     </div>
 
     <!-- رأس القطة (هيلو كيتي) -->
     <div class="kitty-head">
       <div class="bow">🎀</div>
-      <span>جدول الدروس </span>
-      <!-- إضافة صورة هيلو كيتي بجانب النص -->
-      <img src="https://img.icons8.com/?size=100&id=juRF5DiUGr4p&format=png&color=000000">
+      <span>جدول الدروس</span>
+      <img class="hello-kitty-icon" src="https://img.icons8.com/?size=100&id=juRF5DiUGr4p&format=png&color=000000" alt="Hello Kitty">
     </div>
 
     <div class="inner-box">
@@ -59,35 +55,39 @@
       <!-- شريط حالة التعديل -->
       <div class="edit-status" id="editStatus">✏️ جاري التعديل... اضغطي "حفظ" عند الانتهاء.</div>
 
-      <table>
-        <thead>
-          <tr>
-            <th>اليوم</th>
-            <th>المادة</th>
-            <th>الوقت والعداد</th>
-            <th>ملاحظات</th>
-          </tr>
-        </thead>
-        <tbody id="schedule-body"></tbody>
-      </table>
+      <!-- جدول الحصص -->
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>اليوم</th>
+              <th>المادة</th>
+              <th>الوقت</th>
+              <th>ملاحظات</th>
+            </tr>
+          </thead>
+          <tbody id="schedule-body"></tbody>
+        </table>
+      </div>
 
       <!-- ملاحظات الأهداف -->
       <div class="goals-note">
         <h3>📌 أهداف الأسبوع / قائمة المهام:</h3>
-        <textarea id="goals-input" rows="2" placeholder="اكتبي هنا الحاجات اللي عايزة تخلصيها الاسبوع ده..."></textarea>
+        <textarea id="goals-input" rows="3" placeholder="اكتبي هنا الحاجات اللي عايزة تخلصيها الاسبوع ده..."></textarea>
       </div>
 
       <!-- التذييل -->
       <div class="footer-section">
         <button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ كـ PDF</button>
         <div class="footer-note">
-          🌸 "النجاح يبدأ بخطوة صغيرة، بس حلوة! 💕" <br>
-         
+          🌸 "النجاح يبدأ بخطوة صغيرة، بس حلوة! 💕"
+        </div>
+      </div>
 
-    </div>
-  </div>
+    </div> <!-- نهاية inner-box -->
+  </div> <!-- نهاية kitty-container -->
 
-  <!-- ===== ربط JavaScript (نوع module لاستخدام Firebase) ===== -->
+  <!-- ===== ربط JavaScript ===== -->
   <script type="module" src="script.js"></script>
 </body>
 </html>
