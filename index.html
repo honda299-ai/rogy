@@ -4,12 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>جدول الحصص 🎀</title>
-  <!-- ربط ملفات CSS و JavaScript -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body data-theme="light">
 
-  <!-- ===== زخارف متحركة ===== -->
+  <!-- زخارف متحركة -->
   <div class="floating-decorations">
     <span class="decor-item" style="left: 8%; animation-delay: 0s;">🌸</span>
     <span class="decor-item" style="left: 28%; animation-delay: 2s;">✨</span>
@@ -18,7 +17,7 @@
     <span class="decor-item" style="left: 45%; animation-delay: 6s;">🌟</span>
   </div>
 
-  <!-- ===== أزرار التحكم ===== -->
+  <!-- أزرار التحكم -->
   <div class="control-buttons left">
     <button class="ctrl-btn theme-btn" onclick="toggleTheme()">
       <span id="theme-icon">🌙</span> <span id="theme-text">داكن</span>
@@ -30,7 +29,7 @@
     </button>
   </div>
 
-  <!-- ===== الحاوية الرئيسية ===== -->
+  <!-- الحاوية الرئيسية -->
   <div class="kitty-container">
 
     <!-- بطاقة الحصة القادمة -->
@@ -45,18 +44,17 @@
       </div>
     </div>
 
-    <!-- رأس القطة (هيلو كيتي) -->
+    <!-- رأس القطة -->
     <div class="kitty-head">
       <div class="bow">🎀</div>
       <span>جدول الدروس </span>
-      <!-- إضافة صورة هيلو كيتي بجانب النص -->
-      <img src="https://img.icons8.com/?size=100&id=juRF5DiUGr4p&format=png&color=000000">
+      <img src="https://img.icons8.com/?size=100&id=juRF5DiUGr4p&format=png&color=000000" alt="هيلو كيتي">
     </div>
 
     <div class="inner-box">
       <h1>✨ مواعيد الدروس ✨</h1>
 
-      <!-- شريط حالة التعديل -->
+      <!-- حالة التعديل -->
       <div class="edit-status" id="editStatus">✏️ جاري التعديل... اضغطي "حفظ" عند الانتهاء.</div>
 
       <table>
@@ -81,13 +79,12 @@
       <div class="footer-section">
         <button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ كـ PDF</button>
         <div class="footer-note">
-          🌸 "النجاح يبدأ بخطوة صغيرة، بس حلوة! 💕" <br>
-         
-
+          🌸 "النجاح يبدأ بخطوة صغيرة، بس حلوة! 💕"
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- ===== ربط JavaScript (نوع module لاستخدام Firebase) ===== -->
   <script type="module" src="script.js"></script>
 </body>
 </html>
