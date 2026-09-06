@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>جدول الحصص 🎀</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-theme="light">
+
+  <!-- زخارف متحركة -->
+  <div class="floating-decorations">
+    <span class="decor-item" style="left: 8%; animation-delay: 0s;">🌸</span>
+    <span class="decor-item" style="left: 28%; animation-delay: 2s;">✨</span>
+    <span class="decor-item" style="left: 55%; animation-delay: 4s;">🎀</span>
+    <span class="decor-item" style="left: 82%; animation-delay: 1s;">💖</span>
+    <span class="decor-item" style="left: 45%; animation-delay: 6s;">🌟</span>
+  </div>
+
+  <!-- أزرار التحكم -->
+  <div class="control-buttons left">
+    <button class="ctrl-btn theme-btn" onclick="toggleTheme()">
+      <span id="theme-icon">🌙</span> <span id="theme-text">داكن</span>
+    </button>
+  </div>
+  <div class="control-buttons right">
+    <button class="ctrl-btn edit-btn" id="editBtn" onclick="toggleEditMode()">
+      ✏️ <span id="edit-text">تعديل</span>
+    </button>
+  </div>
+
+  <!-- الحاوية الرئيسية -->
+  <div class="kitty-container">
+
+    <!-- بطاقة الحصة القادمة -->
+    <div class="next-lesson-card">
+      <div class="next-lesson-info">
+        <h2>⏰ الدرس اللي جي:</h2>
+        <div class="subject-title" id="hero-subject">استني بحسبها مستسعجلنيش...</div>
+      </div>
+      <div class="next-lesson-timer">
+        <span class="timer-lbl" id="hero-status">متبقي على البداية:</span>
+        <span class="timer-val" id="hero-timer">00س : 00د : 00ث</span>
+      </div>
+    </div>
+
+    <!-- رأس القطة -->
+    <div class="kitty-head">
+      <div class="bow">🎀</div>
+      <span>جدول الدروس </span>
+      <img src="https://img.icons8.com/?size=100&id=juRF5DiUGr4p&format=png&color=000000" alt="هيلو كيتي">
+    </div>
+
+    <div class="inner-box">
+      <h1>✨ مواعيد الدروس ✨</h1>
+
+      <!-- حالة التعديل -->
+      <div class="edit-status" id="editStatus">✏️ جاري التعديل... اضغطي "حفظ" عند الانتهاء.</div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>اليوم</th>
+            <th>المادة</th>
+            <th>الوقت والعداد</th>
+            <th>ملاحظات</th>
+          </tr>
+        </thead>
+        <tbody id="schedule-body"></tbody>
+      </table>
+
+      <!-- ملاحظات الأهداف -->
+      <div class="goals-note">
+        <h3>📌 أهداف الأسبوع / قائمة المهام:</h3>
+        <textarea id="goals-input" rows="2" placeholder="اكتبي هنا الحاجات اللي عايزة تخلصيها الاسبوع ده..."></textarea>
+      </div>
+
+      <!-- التذييل -->
+      <div class="footer-section">
+        <button class="print-btn" onclick="window.print()">🖨️ طباعة / حفظ كـ PDF</button>
+        <div class="footer-note">
+          🌸 "النجاح يبدأ بخطوة صغيرة، بس حلوة! 💕"
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>
