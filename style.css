@@ -425,7 +425,7 @@ tr.today-highlight td {
   background: rgba(80, 40, 80, 0.9) !important;
 }
 
-/* ===== شارات العداد (غير مستخدمة حالياً) ===== */
+/* ===== شارات العداد ===== */
 .countdown-badge {
   display: inline-block;
   margin-top: 5px;
