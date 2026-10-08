@@ -158,3 +158,49 @@ function updateTodayHighlight() {
     }
   });
 }
+
+// ===== منطق مؤشر بومودورو للمذاكرة =====
+let pomodoroSeconds = 25 * 60;
+let pomodoroInterval = null;
+let isWorkSession = true;
+
+window.updatePomodoroDisplay = function() {
+  const minutes = Math.floor(pomodoroSeconds / 60);
+  const seconds = pomodoroSeconds % 60;
+  const display = document.getElementById('pom-display');
+  if (display) {
+    display.innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  }
+};
+
+window.startPomodoro = function() {
+  if (pomodoroInterval) return;
+  pomodoroInterval = setInterval(() => {
+    if (pomodoroSeconds > 0) {
+      pomodoroSeconds--;
+      window.updatePomodoroDisplay();
+    } else {
+      clearInterval(pomodoroInterval);
+      pomodoroInterval = null;
+      alert(isWorkSession ? "انتهى وقت التركيز! خذي استراحة قصيرة ☕" : "انتهى وقت الاستراحة، عود للمذاكرة! 📚");
+      isWorkSession = !isWorkSession;
+      pomodoroSeconds = isWorkSession ? 25 * 60 : 5 * 60;
+      document.getElementById('pom-label').innerText = isWorkSession ? "🍅 مؤشر بومودورو (وقت التركيز):" : "☕ وقت الاستراحة:";
+      window.updatePomodoroDisplay();
+    }
+  }, 1000);
+};
+
+window.pausePomodoro = function() {
+  clearInterval(pomodoroInterval);
+  pomodoroInterval = null;
+};
+
+window.resetPomodoro = function() {
+  clearInterval(pomodoroInterval);
+  pomodoroInterval = null;
+  isWorkSession = true;
+  pomodoroSeconds = 25 * 60;
+  document.getElementById('pom-label').innerText = "🍅 مؤشر بومودورو (وقت التركيز):";
+  window.updatePomodoroDisplay();
+};

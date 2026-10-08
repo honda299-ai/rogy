@@ -44,6 +44,17 @@
         </table>
       </div>
 
+      <!-- مؤشر بومودورو للمذاكرة -->
+      <div class="pomodoro-card">
+        <div class="pomodoro-title" id="pom-label">🍅 مؤشر بومودورو (وقت التركيز):</div>
+        <div class="pomodoro-timer" id="pom-display">25:00</div>
+        <div class="pomodoro-btns">
+          <button class="pom-btn pom-start" onclick="startPomodoro()">ابدأ</button>
+          <button class="pom-btn pom-pause" onclick="pausePomodoro()">إيقاف مؤقت</button>
+          <button class="pom-btn pom-reset" onclick="resetPomodoro()">إعادة ضبط</button>
+        </div>
+      </div>
+
       <div class="goals-note">
         <h3>📌 أهداف الأسبوع / قائمة المهام:</h3>
         <textarea id="goals-input" rows="3" placeholder="اكتبي هنا الحاجات اللي عايزة تخلصيها الاسبوع ده..."></textarea>

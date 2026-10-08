@@ -290,6 +290,47 @@ tr.today-highlight {
   resize: none;
 }
 
+/* تنسيق مؤشر بومودورو الجديد */
+.pomodoro-card {
+  margin-top: 15px;
+  background: var(--table-bg);
+  border: 2px solid var(--inner-border);
+  border-radius: 16px;
+  padding: 12px;
+  text-align: center;
+}
+.pomodoro-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--title-color);
+  margin-bottom: 6px;
+}
+.pomodoro-timer {
+  font-size: 22px;
+  font-weight: 900;
+  font-family: 'Baloo Bhaijaan 2', sans-serif;
+  color: var(--text-main);
+  margin-bottom: 8px;
+}
+.pomodoro-btns {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+.pom-btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 10px;
+  font-family: 'Cairo', sans-serif;
+  font-weight: bold;
+  font-size: 12px;
+  cursor: pointer;
+  color: white;
+}
+.pom-start { background: #2e7d32; }
+.pom-pause { background: #d32f2f; }
+.pom-reset { background: #757575; }
+
 .footer-section { text-align: center; margin-top: 15px; }
 .print-btn {
   background: linear-gradient(45deg, #ff66a3, #ff80ab);
