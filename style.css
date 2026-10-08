@@ -16,8 +16,6 @@
   --note-border: #fbc02d;
   --note-title: #f57f17;
   --note-text: #444;
-  --hero-bg: linear-gradient(135deg, #ff66a3 0%, #ff1493 100%);
-  --hero-text: #ffffff;
   --shadow-color: rgba(255, 105, 180, 0.2);
 
   --bio-bg: #e8f5e9; --bio-text: #2e7d32;
@@ -55,8 +53,6 @@
   --note-border: #c09040;
   --note-title: #f0c060;
   --note-text: #e0d0c0;
-  --hero-bg: linear-gradient(135deg, #5c255c 0%, #3a153a 100%);
-  --hero-text: #f0d0f0;
   --shadow-color: rgba(0, 0, 0, 0.5);
 
   --bio-bg: #1b382b; --bio-text: #81c784;
@@ -129,39 +125,6 @@ body {
   box-shadow: 0 10px 25px var(--shadow-color);
   border: 3px solid var(--container-border);
   margin-top: 45px;
-}
-
-.next-lesson-card {
-  background: var(--hero-bg);
-  color: var(--hero-text);
-  border-radius: 20px;
-  padding: 12px 15px;
-  margin-bottom: 15px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  text-align: center;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-}
-.next-lesson-info h2 {
-  margin: 0;
-  font-size: 13px;
-  opacity: 0.9;
-}
-.next-lesson-info .subject-title {
-  font-size: 20px;
-  font-family: 'Baloo Bhaijaan 2', sans-serif;
-  font-weight: 800;
-}
-.next-lesson-timer {
-  background: rgba(255, 255, 255, 0.2);
-  padding: 6px 12px;
-  border-radius: 12px;
-}
-.next-lesson-timer .timer-val {
-  font-size: 16px;
-  font-weight: 900;
-  font-family: 'Baloo Bhaijaan 2', sans-serif;
 }
 
 .kitty-head {

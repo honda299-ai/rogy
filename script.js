@@ -73,7 +73,7 @@ onValue(scheduleRef, (snapshot) => {
   currentScheduleData = data || defaultSchedule;
   renderTable(currentScheduleData);
   if (!data) set(scheduleRef, defaultSchedule);
-  updateHighlightsAndHero();
+  updateTodayHighlight();
 });
 
 onValue(goalsRef, (snapshot) => {
@@ -145,7 +145,7 @@ window.toggleEditMode = function() {
   }
 };
 
-function updateHighlightsAndHero() {
+function updateTodayHighlight() {
   const now = new Date();
   const currentJSDay = now.getDay();
 
@@ -157,37 +157,4 @@ function updateHighlightsAndHero() {
       row.classList.remove("today-highlight");
     }
   });
-
-  const todayData = currentScheduleData.find(item => item.dataDay === currentJSDay);
-  const heroSubject = document.getElementById('hero-subject');
-  const heroTimer = document.getElementById('hero-timer');
-  const heroStatus = document.getElementById('hero-status');
-
-  if (todayData && todayData.time && todayData.time.includes(":")) {
-    heroSubject.innerText = todayData.subject;
-    
-    const [targetHours, targetMinutes] = todayData.time.split(":").map(Number);
-    const targetTime = new Date();
-    targetTime.setHours(targetHours, targetMinutes, 0, 0);
-
-    const diff = targetTime - now;
-
-    if (diff > 0) {
-      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-      heroStatus.innerText = "متبقي على الدرس:";
-      heroTimer.innerText = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    } else {
-      heroStatus.innerText = "حالة اليوم:";
-      heroTimer.innerText = "بدأ الدرس أو انتهى";
-    }
-  } else {
-    heroSubject.innerText = "مفيش حصص النهارده 🎉";
-    heroStatus.innerText = "حالة اليوم:";
-    heroTimer.innerText = "-- : --";
-  }
 }
-
-setInterval(updateHighlightsAndHero, 1000);
