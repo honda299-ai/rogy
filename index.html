@@ -26,7 +26,7 @@
     </div>
 
     <div class="inner-box">
-      <h1>✨ مواعيد الدروس ✨</h1>
+      <h1>✨ مواعيد الحصص والحضور ✨</h1>
 
       <div class="edit-status" id="editStatus">✏️ جاري التعديل... اضغطي "حفظ" عند الانتهاء.</div>
 
@@ -38,20 +38,18 @@
               <th>المادة</th>
               <th>الوقت</th>
               <th>ملاحظات</th>
+              <th>الحضور</th>
             </tr>
           </thead>
           <tbody id="schedule-body"></tbody>
         </table>
       </div>
 
-      <!-- مؤشر بومودورو للمذاكرة -->
-      <div class="pomodoro-card">
-        <div class="pomodoro-title" id="pom-label">🍅 (وقت التركيز):</div>
-        <div class="pomodoro-timer" id="pom-display">30:00</div>
-        <div class="pomodoro-btns">
-          <button class="pom-btn pom-start" onclick="startPomodoro()">ابدأ</button>
-          <button class="pom-btn pom-pause" onclick="pausePomodoro()">إيقاف مؤقت</button>
-          <button class="pom-btn pom-reset" onclick="resetPomodoro()">إعادة ضبط</button>
+      <div class="rewards-card">
+        <div class="rewards-title">🏆 صندوق المكافآت والأوسمة:</div>
+        <div class="rewards-score" id="rewards-score">نقاط الحضور: 0 نقطة ⭐</div>
+        <div class="badges-container" id="badges-container">
+          <span class="badge-item">🔒 بدايات مبكرة</span>
         </div>
       </div>
 

@@ -248,6 +248,7 @@ tr[data-day="5"] td:first-child { background: var(--day-fri); }
 td:nth-of-type(2)::before { content: "المادة:"; font-weight: bold; color: var(--title-color); }
 td:nth-of-type(3)::before { content: "الوقت:"; font-weight: bold; color: var(--title-color); }
 td:nth-of-type(4)::before { content: "ملاحظات:"; font-weight: bold; color: var(--title-color); }
+td:nth-of-type(5)::before { content: "الحضور:"; font-weight: bold; color: var(--title-color); }
 
 tr.bio td:nth-child(2) { background: var(--bio-bg); color: var(--bio-text); border-radius: 8px; }
 tr.eng td:nth-child(2) { background: var(--eng-bg); color: var(--eng-text); border-radius: 8px; }
@@ -265,6 +266,62 @@ tr.today-highlight {
   background: rgba(255, 255, 255, 0.9) !important;
   border-radius: 6px;
   padding: 2px 6px;
+}
+
+.attendance-btn {
+  padding: 4px 10px;
+  border-radius: 8px;
+  border: none;
+  font-family: 'Cairo', sans-serif;
+  font-weight: bold;
+  font-size: 12px;
+  cursor: pointer;
+  background: #e0e0e0;
+  color: #424242;
+}
+.attendance-btn.attended {
+  background: #2e7d32;
+  color: #fff;
+}
+.attendance-btn.absent {
+  background: #c62828;
+  color: #fff;
+}
+
+.rewards-card {
+  margin-top: 15px;
+  background: linear-gradient(135deg, #fffde7, #fff9c4);
+  border: 2px solid #fbc02d;
+  border-radius: 16px;
+  padding: 12px;
+  text-align: center;
+}
+.rewards-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #f57f17;
+  margin-bottom: 4px;
+}
+.rewards-score {
+  font-size: 16px;
+  font-weight: 900;
+  color: #880e4f;
+  margin-bottom: 6px;
+}
+.badges-container {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.badge-item {
+  background: white;
+  padding: 4px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: bold;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+  border: 1px solid #ffe082;
 }
 
 .goals-note {
@@ -289,47 +346,6 @@ tr.today-highlight {
   font-size: 13px;
   resize: none;
 }
-
-/* تنسيق مؤشر بومودورو الجديد */
-.pomodoro-card {
-  margin-top: 15px;
-  background: var(--table-bg);
-  border: 2px solid var(--inner-border);
-  border-radius: 16px;
-  padding: 12px;
-  text-align: center;
-}
-.pomodoro-title {
-  font-size: 14px;
-  font-weight: bold;
-  color: var(--title-color);
-  margin-bottom: 6px;
-}
-.pomodoro-timer {
-  font-size: 22px;
-  font-weight: 900;
-  font-family: 'Baloo Bhaijaan 2', sans-serif;
-  color: var(--text-main);
-  margin-bottom: 8px;
-}
-.pomodoro-btns {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-}
-.pom-btn {
-  padding: 6px 12px;
-  border: none;
-  border-radius: 10px;
-  font-family: 'Cairo', sans-serif;
-  font-weight: bold;
-  font-size: 12px;
-  cursor: pointer;
-  color: white;
-}
-.pom-start { background: #2e7d32; }
-.pom-pause { background: #d32f2f; }
-.pom-reset { background: #757575; }
 
 .footer-section { text-align: center; margin-top: 15px; }
 .print-btn {

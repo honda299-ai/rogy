@@ -16,13 +16,13 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 const defaultSchedule = [
-  { day: "السبت", dataDay: 6, class: "off", subject: "📖 إجازة / استذكار", time: "15:30", notes: "مراجعة أسبوعية" },
-  { day: "الأحد", dataDay: 0, class: "bio", subject: "🧬 أحياء", time: "15:30", notes: "حل أسئلة الفصل" },
-  { day: "الاثنين", dataDay: 1, class: "eng", subject: "🇬🇧 إنجليزي", time: "09:00", notes: "حفظ الكلمات" },
-  { day: "الثلاثاء", dataDay: 2, class: "chem", subject: "🧪 كيمياء", time: "08:00", notes: "اختبار قصير" },
-  { day: "الأربعاء", dataDay: 3, class: "arabic", subject: "📚 عربي", time: "08:00", notes: "قواعد ونصوص" },
-  { day: "الخميس", dataDay: 4, class: "off", subject: "💻 إجازة", time: "-----", notes: "والعة معاك 🎉" },
-  { day: "الجمعة", dataDay: 5, class: "off", subject: "☕ إجازة", time: "-----", notes: "الله يسهّلها 💕" }
+  { day: "السبت", dataDay: 6, class: "off", subject: "📖 إجازة / استذكار", time: "15:30", notes: "مراجعة أسبوعية", status: "none" },
+  { day: "الأحد", dataDay: 0, class: "bio", subject: "🧬 أحياء", time: "15:30", notes: "حل أسئلة الفصل", status: "none" },
+  { day: "الاثنين", dataDay: 1, class: "eng", subject: "🇬🇧 إنجليزي", time: "09:00", notes: "حفظ الكلمات", status: "none" },
+  { day: "الثلاثاء", dataDay: 2, class: "chem", subject: "🧪 كيمياء", time: "08:00", notes: "اختبار قصير", status: "none" },
+  { day: "الأربعاء", dataDay: 3, class: "arabic", subject: "📚 عربي", time: "08:00", notes: "قواعد ونصوص", status: "none" },
+  { day: "الخميس", dataDay: 4, class: "off", subject: "💻 إجازة", time: "-----", notes: "والعة معاك 🎉", status: "none" },
+  { day: "الجمعة", dataDay: 5, class: "off", subject: "☕ إجازة", time: "-----", notes: "الله يسهّلها 💕", status: "none" }
 ];
 
 let isEditing = false;
@@ -74,6 +74,7 @@ onValue(scheduleRef, (snapshot) => {
   renderTable(currentScheduleData);
   if (!data) set(scheduleRef, defaultSchedule);
   updateTodayHighlight();
+  updateRewards();
 });
 
 onValue(goalsRef, (snapshot) => {
@@ -91,10 +92,20 @@ document.getElementById('goals-input').addEventListener('input', (e) => {
 function renderTable(data) {
   const tbody = document.getElementById('schedule-body');
   tbody.innerHTML = '';
-  data.forEach((row) => {
+  data.forEach((row, index) => {
     const tr = document.createElement('tr');
     tr.setAttribute('data-day', row.dataDay);
     if (row.class) tr.className = row.class;
+
+    let attendanceClass = "attendance-btn";
+    let attendanceText = "تسجيل حضور";
+    if (row.status === "attended") {
+      attendanceClass += " attended";
+      attendanceText = "✅ حضرت";
+    } else if (row.status === "absent") {
+      attendanceClass += " absent";
+      attendanceText = "❌ غياب";
+    }
 
     tr.innerHTML = `
       <td>${row.day}</td>
@@ -103,9 +114,48 @@ function renderTable(data) {
         <span class="time-text editable-cell" contenteditable="${isEditing}">${row.time}</span>
       </td>
       <td class="editable-cell" contenteditable="${isEditing}">${row.notes}</td>
+      <td>
+        <button class="${attendanceClass}" onclick="toggleAttendance(${index})">${attendanceText}</button>
+      </td>
     `;
     tbody.appendChild(tr);
   });
+}
+
+window.toggleAttendance = function(index) {
+  const statuses = ["none", "attended", "absent"];
+  let currentStatus = currentScheduleData[index].status || "none";
+  let nextIndex = (statuses.indexOf(currentStatus) + 1) % statuses.length;
+  currentScheduleData[index].status = statuses[nextIndex];
+
+  set(scheduleRef, currentScheduleData);
+  renderTable(currentScheduleData);
+  updateRewards();
+};
+
+function updateRewards() {
+  let attendedCount = 0;
+  currentScheduleData.forEach(row => {
+    if (row.status === "attended") {
+      attendedCount++;
+    }
+  });
+
+  const points = attendedCount * 10;
+  const scoreEl = document.getElementById('rewards-score');
+  if (scoreEl) {
+    scoreEl.innerText = `نقاط الحضور: ${points} نقطة ⭐ (${attendedCount} حصص حضرتيها)`;
+  }
+
+  const badgesContainer = document.getElementById('badges-container');
+  if (badgesContainer) {
+    let badgesHTML = '';
+    if (attendedCount >= 1) badgesHTML += `<span class="badge-item">🌟 بداية موفقة</span>`;
+    if (attendedCount >= 3) badgesHTML += `<span class="badge-item">🏆 مجتهدة الأسبوع</span>`;
+    if (attendedCount >= 5) badgesHTML += `<span class="badge-item">👑 بطلة الحضور</span>`;
+    if (attendedCount === 0) badgesHTML += `<span class="badge-item">🔒 سجلي حضورك لفتح الأوسمة</span>`;
+    badgesContainer.innerHTML = badgesHTML;
+  }
 }
 
 window.toggleEditMode = function() {
@@ -138,7 +188,8 @@ window.toggleEditMode = function() {
         class: originalRow.class || "",
         subject: tds[1]?.innerText?.trim() || originalRow.subject || "",
         time: timeText,
-        notes: tds[3]?.innerText?.trim() || originalRow.notes || ""
+        notes: tds[3]?.innerText?.trim() || originalRow.notes || "",
+        status: originalRow.status || "none"
       });
     });
     set(scheduleRef, updatedSchedule);
@@ -158,49 +209,3 @@ function updateTodayHighlight() {
     }
   });
 }
-
-// ===== منطق مؤشر بومودورو للمذاكرة =====
-let pomodoroSeconds = 25 * 60;
-let pomodoroInterval = null;
-let isWorkSession = true;
-
-window.updatePomodoroDisplay = function() {
-  const minutes = Math.floor(pomodoroSeconds / 60);
-  const seconds = pomodoroSeconds % 60;
-  const display = document.getElementById('pom-display');
-  if (display) {
-    display.innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-  }
-};
-
-window.startPomodoro = function() {
-  if (pomodoroInterval) return;
-  pomodoroInterval = setInterval(() => {
-    if (pomodoroSeconds > 0) {
-      pomodoroSeconds--;
-      window.updatePomodoroDisplay();
-    } else {
-      clearInterval(pomodoroInterval);
-      pomodoroInterval = null;
-      alert(isWorkSession ? "انتهى وقت التركيز! خذي استراحة قصيرة ☕" : "انتهى وقت الاستراحة، عود للمذاكرة! 📚");
-      isWorkSession = !isWorkSession;
-      pomodoroSeconds = isWorkSession ? 25 * 60 : 5 * 60;
-      document.getElementById('pom-label').innerText = isWorkSession ? "🍅 مؤشر بومودورو (وقت التركيز):" : "☕ وقت الاستراحة:";
-      window.updatePomodoroDisplay();
-    }
-  }, 1000);
-};
-
-window.pausePomodoro = function() {
-  clearInterval(pomodoroInterval);
-  pomodoroInterval = null;
-};
-
-window.resetPomodoro = function() {
-  clearInterval(pomodoroInterval);
-  pomodoroInterval = null;
-  isWorkSession = true;
-  pomodoroSeconds = 25 * 60;
-  document.getElementById('pom-label').innerText = "🍅 مؤشر بومودورو (وقت التركيز):";
-  window.updatePomodoroDisplay();
-};
