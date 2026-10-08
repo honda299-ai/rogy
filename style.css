@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Baloo+Bhaijaan+2:wght@700;800&display=swap');
 
-/* ===== المتغيرات الأساسية ===== */
 :root {
   --bg-gradient: linear-gradient(135deg, #ffe4ec 0%, #fff5f7 50%, #fce4ec 100%);
   --container-bg: rgba(255, 255, 255, 0.98);
@@ -21,14 +20,12 @@
   --hero-text: #ffffff;
   --shadow-color: rgba(255, 105, 180, 0.2);
 
-  /* ألوان الحصص */
   --bio-bg: #e8f5e9; --bio-text: #2e7d32;
   --eng-bg: #e3f2fd; --eng-text: #1565c0;
   --chem-bg: #f3e5f5; --chem-text: #6a1b9a;
   --arabic-bg: #fff8e1; --arabic-text: #e65100;
   --off-bg: #f5f5f5; --off-text: #616161;
 
-  /* ألوان أسامي أيام الأسبوع المخصصة */
   --day-sat: linear-gradient(45deg, #ff70a6, #ff9770);
   --day-sun: linear-gradient(45deg, #ffd670, #e9ff70);
   --day-mon: linear-gradient(45deg, #70d6ff, #70e5ff);
@@ -42,7 +39,6 @@
   --theme-btn-bg: #f9a825;
 }
 
-/* ===== الدارك مود ===== */
 [data-theme="dark"] {
   --bg-gradient: linear-gradient(135deg, #0f0c20 0%, #15102a 100%);
   --container-bg: #1c182d;
@@ -96,7 +92,6 @@ body {
   justify-content: center;
 }
 
-/* ===== أزرار التحكم العلوية ===== */
 .top-bar {
   position: fixed;
   top: 10px;
@@ -125,7 +120,6 @@ body {
 .edit-btn.active { background: #2e7d32; }
 .theme-btn { background: var(--theme-btn-bg); }
 
-/* ===== الحاوية الرئيسية للهاتف ===== */
 .kitty-container {
   width: 100%;
   max-width: 480px;
@@ -137,7 +131,6 @@ body {
   margin-top: 45px;
 }
 
-/* ===== بطاقة الحصة القادمة ===== */
 .next-lesson-card {
   background: var(--hero-bg);
   color: var(--hero-text);
@@ -171,7 +164,6 @@ body {
   font-family: 'Baloo Bhaijaan 2', sans-serif;
 }
 
-/* ===== رأس القطة ===== */
 .kitty-head {
   background: #ff99cc;
   height: 60px;
@@ -221,7 +213,6 @@ body {
   object-fit: contain;
 }
 
-/* ===== الصندوق الداخلي ===== */
 .inner-box {
   background: var(--inner-bg);
   border-radius: 16px;
@@ -249,7 +240,6 @@ h1 {
 }
 .edit-status.show { display: block; }
 
-/* ===== تحويل الجدول إلى كروت مخصصة للهواتف ===== */
 table, thead, tbody, th, td, tr { display: block; }
 thead { display: none; }
 
@@ -273,7 +263,6 @@ td {
 }
 td:last-child { border-bottom: none; }
 
-/* تنسيق وتلوين خلية يوم الأسبوع */
 td:first-child {
   font-size: 16px;
   font-weight: 900;
@@ -285,7 +274,6 @@ td:first-child {
   text-shadow: 0 1px 2px rgba(0,0,0,0.3);
 }
 
-/* ربط ألوان أيام الأسبوع */
 tr[data-day="6"] td:first-child { background: var(--day-sat); }
 tr[data-day="0"] td:first-child { background: var(--day-sun); }
 tr[data-day="1"] td:first-child { background: var(--day-mon); }
@@ -294,25 +282,21 @@ tr[data-day="3"] td:first-child { background: var(--day-wed); }
 tr[data-day="4"] td:first-child { background: var(--day-thu); }
 tr[data-day="5"] td:first-child { background: var(--day-fri); }
 
-/* إضافة تسميات الحقول للجوال */
 td:nth-of-type(2)::before { content: "المادة:"; font-weight: bold; color: var(--title-color); }
 td:nth-of-type(3)::before { content: "الوقت:"; font-weight: bold; color: var(--title-color); }
 td:nth-of-type(4)::before { content: "ملاحظات:"; font-weight: bold; color: var(--title-color); }
 
-/* ألوان المادت الخاصة */
 tr.bio td:nth-child(2) { background: var(--bio-bg); color: var(--bio-text); border-radius: 8px; }
 tr.eng td:nth-child(2) { background: var(--eng-bg); color: var(--eng-text); border-radius: 8px; }
 tr.chem td:nth-child(2) { background: var(--chem-bg); color: var(--chem-text); border-radius: 8px; }
 tr.arabic td:nth-child(2) { background: var(--arabic-bg); color: var(--arabic-text); border-radius: 8px; }
 tr.off td:nth-child(2) { background: var(--off-bg); color: var(--off-text); border-radius: 8px; }
 
-/* تمييز اليوم الحالي */
 tr.today-highlight {
   border: 2px solid #ff1493 !important;
   box-shadow: 0 0 12px rgba(255, 20, 147, 0.3) !important;
 }
 
-/* الخلايا القابلة للتعديل */
 .editable-cell[contenteditable="true"] {
   border: 1px dashed var(--title-color) !important;
   background: rgba(255, 255, 255, 0.9) !important;
@@ -320,7 +304,6 @@ tr.today-highlight {
   padding: 2px 6px;
 }
 
-/* الأهداف والتذييل */
 .goals-note {
   margin-top: 15px;
   background: var(--note-bg);
@@ -365,5 +348,3 @@ tr.today-highlight {
   padding: 8px;
   border-radius: 20px;
 }
-
-.floating-decorations { display: none; } /* إخفاء الزخارف الثقيلة على الهواتف لزيادة السلاسة */

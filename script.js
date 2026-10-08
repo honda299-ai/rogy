@@ -31,7 +31,6 @@ let currentScheduleData = [];
 const scheduleRef = ref(db, 'schedule');
 const goalsRef = ref(db, 'goals');
 
-// ===== إدارة واسترجاع الثيم المحفوظ (LocalStorage) =====
 function applySavedTheme() {
   const savedTheme = localStorage.getItem('theme') || 'light';
   document.body.setAttribute('data-theme', savedTheme);
@@ -48,22 +47,16 @@ function applySavedTheme() {
   }
 }
 
-// تطبيق الثيم فور فتح الصفحة
 applySavedTheme();
 
-// ===== تبديل وحفظ الثيم =====
 window.toggleTheme = function() {
   const body = document.body;
   const currentTheme = body.getAttribute("data-theme");
   const newTheme = currentTheme === "dark" ? "light" : "dark";
 
-  // تطبيق الثيم الجديد
   body.setAttribute("data-theme", newTheme);
-  
-  // حفظ الخيار في ذاكرة المتصفح
   localStorage.setItem('theme', newTheme);
 
-  // تحديث نص وأيقونة الزر
   const icon = document.getElementById("theme-icon");
   const text = document.getElementById("theme-text");
   if (newTheme === "dark") {
@@ -75,7 +68,6 @@ window.toggleTheme = function() {
   }
 };
 
-// ===== مراقبة الجدول من الفايربيس =====
 onValue(scheduleRef, (snapshot) => {
   const data = snapshot.val();
   currentScheduleData = data || defaultSchedule;
@@ -84,7 +76,6 @@ onValue(scheduleRef, (snapshot) => {
   updateHighlightsAndHero();
 });
 
-// ===== مراقبة الأهداف من الفايربيس =====
 onValue(goalsRef, (snapshot) => {
   const goals = snapshot.val();
   const input = document.getElementById('goals-input');
@@ -97,7 +88,6 @@ document.getElementById('goals-input').addEventListener('input', (e) => {
   set(goalsRef, e.target.value);
 });
 
-// ===== عرض الجدول =====
 function renderTable(data) {
   const tbody = document.getElementById('schedule-body');
   tbody.innerHTML = '';
@@ -118,7 +108,6 @@ function renderTable(data) {
   });
 }
 
-// ===== تبديل وضع التعديل =====
 window.toggleEditMode = function() {
   isEditing = !isEditing;
   const btn = document.getElementById('editBtn');
@@ -156,7 +145,6 @@ window.toggleEditMode = function() {
   }
 };
 
-// ===== تمييز اليوم الحالي وحدث الدرس التالي =====
 function updateHighlightsAndHero() {
   const now = new Date();
   const currentJSDay = now.getDay();
@@ -173,12 +161,31 @@ function updateHighlightsAndHero() {
   const todayData = currentScheduleData.find(item => item.dataDay === currentJSDay);
   const heroSubject = document.getElementById('hero-subject');
   const heroTimer = document.getElementById('hero-timer');
+  const heroStatus = document.getElementById('hero-status');
 
-  if (todayData) {
+  if (todayData && todayData.time && todayData.time.includes(":")) {
     heroSubject.innerText = todayData.subject;
-    heroTimer.innerText = todayData.time;
+    
+    const [targetHours, targetMinutes] = todayData.time.split(":").map(Number);
+    const targetTime = new Date();
+    targetTime.setHours(targetHours, targetMinutes, 0, 0);
+
+    const diff = targetTime - now;
+
+    if (diff > 0) {
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      heroStatus.innerText = "متبقي على الدرس:";
+      heroTimer.innerText = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    } else {
+      heroStatus.innerText = "حالة اليوم:";
+      heroTimer.innerText = "بدأ الدرس أو انتهى";
+    }
   } else {
     heroSubject.innerText = "مفيش حصص النهارده 🎉";
+    heroStatus.innerText = "حالة اليوم:";
     heroTimer.innerText = "-- : --";
   }
 }
